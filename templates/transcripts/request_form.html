@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Request Transcript{% endblock %}
+{% block content %}
+<h2>Request Transcript</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button type="submit" class="btn btn-primary">Submit Request</button>
+</form>
+{% if form.payment_method.value == 'manual' or not form.payment_method.value %}
+  <div class="alert alert-warning mt-3">
+    <strong>Manual Payment Instructions:</strong><br>
+    After admin review, you will receive payment instructions and the price. Please wait for admin notification before making any payment.
+  </div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+// Show/hide fields based on request type
+const requestType = document.getElementById('id_request_type');
+const recipientName = document.getElementById('id_recipient_name').closest('.mb-3');
+const recipientEmail = document.getElementById('id_recipient_email').closest('.mb-3');
+const printedDelivery = document.getElementById('id_printed_delivery_method').closest('.mb-3');
+const deliveryAddress = document.getElementById('id_delivery_address').closest('.mb-3');
+function updateFields() {
+  if (requestType.value === 'soft_copy') {
+    recipientName.style.display = '';
+    recipientEmail.style.display = '';
+    printedDelivery.style.display = 'none';
+    deliveryAddress.style.display = 'none';
+  } else if (requestType.value === 'printed') {
+    recipientName.style.display = 'none';
+    recipientEmail.style.display = 'none';
+    printedDelivery.style.display = '';
+    deliveryAddress.style.display = '';
+  } else {
+    recipientName.style.display = 'none';
+    recipientEmail.style.display = 'none';
+    printedDelivery.style.display = 'none';
+    deliveryAddress.style.display = 'none';
+  }
+}
+requestType.addEventListener('change', updateFields);
+document.addEventListener('DOMContentLoaded', updateFields);
+</script>
+{% endblock %}

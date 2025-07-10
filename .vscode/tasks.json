@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Django Server",
+            "type": "shell",
+            "command": "source venv/bin/activate && python manage.py runserver",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Django Tests",
+            "type": "shell",
+            "command": "source venv/bin/activate && python manage.py test",
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}

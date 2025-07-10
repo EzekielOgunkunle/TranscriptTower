@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}All Transcript Requests{% endblock %}
+{% block content %}
+<h2>All Transcript Requests</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Student</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Price</th>
+      <th>Payment</th>
+      <th>Created</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in requests %}
+    <tr>
+      <td>{{ req.id }}</td>
+      <td>{{ req.student }}</td>
+      <td>{{ req.get_request_type_display }}</td>
+      <td>{{ req.get_status_display }}</td>
+      <td>{% if req.price %}₦{{ req.price }}{% else %}-{% endif %}</td>
+      <td>{% if req.payment_confirmed %}Confirmed{% elif req.status == 'ready_for_payment' %}Pending{% else %}-{% endif %}</td>
+      <td>{{ req.created_at|date:"Y-m-d H:i" }}</td>
+      <td><a href="{% url 'transcripts:admin_request_update' req.id %}" class="btn btn-sm btn-primary">Update</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8">No requests yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<p>Welcome, {{ user.get_full_name }}!</p>
+<a href="{% url 'transcripts:admin_request_list' %}" class="btn btn-primary">Manage Transcript Requests</a>
+<a href="{% url 'users:logout' %}" class="btn btn-secondary ms-2">Logout</a>
+{% endblock %}
