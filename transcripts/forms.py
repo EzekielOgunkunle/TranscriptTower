@@ -35,3 +35,17 @@ class AdminTranscriptUpdateForm(forms.ModelForm):
         self.fields['admin_feedback'].required = False
         self.fields['payment_confirmed'].required = False
         self.fields['price'].required = False
+
+    def clean_pdf_file(self):
+        pdf = self.cleaned_data.get('pdf_file')
+        if pdf:
+            if not pdf.name.lower().endswith('.pdf'):
+                raise forms.ValidationError('Only PDF files are allowed.')
+            if pdf.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('File size must be under 5MB.')
+        return pdf
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)

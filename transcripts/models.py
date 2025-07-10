@@ -1,6 +1,8 @@
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+# Import Notification model for migrations
 
 # Create your models here.
 

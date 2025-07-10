@@ -1,10 +1,17 @@
+# User dashboard notifications view
+from .notifications import Notification
+@login_required
+def user_notifications(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'transcripts/user_notifications.html', {'notifications': notifications})
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views import View
-from .forms import TranscriptRequestForm, AdminTranscriptUpdateForm
+from .forms import TranscriptRequestForm, AdminTranscriptUpdateForm, ContactForm
 from .models import TranscriptRequest
+from .notifications import Notification
 from django.contrib.auth.decorators import user_passes_test
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -39,7 +46,17 @@ class TranscriptRequestCreateView(View):
 class TranscriptRequestListView(View):
     def get(self, request):
         requests = TranscriptRequest.objects.filter(student=request.user).order_by('-created_at')
-        return render(request, 'transcripts/request_list.html', {'requests': requests})
+        # Show unread notification count in dashboard context
+        unread_notification_count = Notification.objects.filter(user=request.user, read=False).count()
+        return render(request, 'transcripts/request_list.html', {'requests': requests, 'unread_notification_count': unread_notification_count})
+# Mark notification as read
+@login_required
+def mark_notification_read(request, pk):
+    notification = Notification.objects.filter(pk=pk, user=request.user).first()
+    if notification:
+        notification.read = True
+        notification.save()
+    return redirect('transcripts:user_notifications')
 
 @method_decorator(login_required, name='dispatch')
 class TranscriptDownloadView(View):
@@ -87,6 +104,11 @@ class AdminTranscriptUpdateView(View):
                     html_message=email_body,
                     fail_silently=True,
                 )
+                # Create notification for user
+                Notification.objects.create(
+                    user=transcript.student,
+                    message=f'Your transcript request is ready for payment. The price is: ₦{getattr(transcript, "price", "(set by admin)")}. Please proceed with payment.'
+                )
             messages.success(request, 'Transcript request updated!')
             return redirect('transcripts:admin_request_list')
         return render(request, 'transcripts/admin_request_update.html', {'form': form, 'transcript': transcript})
@@ -129,6 +151,11 @@ def paystack_webhook(request):
                     html_message=email_body,
                     fail_silently=True,
                 )
+                # Create notification for user
+                Notification.objects.create(
+                    user=transcript.student,
+                    message=f'Your payment of ₦{amount} was successful. Your transcript request is now confirmed.'
+                )
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'ignored'})
     return JsonResponse({'error': 'Invalid method'}, status=405)
@@ -154,6 +181,36 @@ def confirm_manual_payment(request, pk):
             html_message=email_body,
             fail_silently=True,
         )
+        # Create notification for user
+        Notification.objects.create(
+            user=transcript.student,
+            message=f'Your manual payment for transcript request #{transcript.id} has been confirmed by admin.'
+        )
         messages.success(request, 'Manual payment confirmed and user notified.')
         return redirect('transcripts:admin_request_list')
     return render(request, 'transcripts/confirm_manual_payment.html', {'transcript': transcript})
+
+def contact(request):
+    from django.core.mail import send_mail
+    from django.conf import settings
+    from django.contrib import messages
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            subject = f"Contact Form Submission from {name}"
+            body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+            send_mail(
+                subject,
+                body,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.DEFAULT_FROM_EMAIL],
+                fail_silently=True,
+            )
+            messages.success(request, 'Your message has been sent!')
+            return redirect('home')
+    else:
+        form = ContactForm()
+    return render(request, 'home.html', {'form': form})

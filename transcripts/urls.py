@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import TranscriptRequestCreateView, TranscriptRequestListView, AdminTranscriptListView, AdminTranscriptUpdateView
-from .views import PaystackPaymentView, TranscriptDownloadView, paystack_webhook, confirm_manual_payment
+from .views import (
+    TranscriptRequestCreateView, TranscriptRequestListView, AdminTranscriptListView, AdminTranscriptUpdateView,
+    PaystackPaymentView, TranscriptDownloadView, paystack_webhook, confirm_manual_payment, contact,
+    user_notifications, mark_notification_read
+)
 
 app_name = 'transcripts'
 
@@ -13,4 +16,7 @@ urlpatterns = [
     path('paystack/<int:pk>/', PaystackPaymentView.as_view(), name='paystack_payment'),
     path('download/<int:pk>/', TranscriptDownloadView.as_view(), name='download'),
     path('paystack/webhook/', paystack_webhook, name='paystack_webhook'),
+    path('contact/', contact, name='contact'),
+    path('notifications/', user_notifications, name='user_notifications'),
+    path('notifications/read/<int:pk>/', mark_notification_read, name='mark_notification_read'),
 ]
