@@ -7,6 +7,12 @@ from .forms import TranscriptRequestForm, AdminTranscriptUpdateForm
 from .models import TranscriptRequest
 from django.contrib.auth.decorators import user_passes_test
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+import json
 
 # Only allow non-admins to request transcripts
 def is_not_admin(user):
@@ -93,3 +99,36 @@ class PaystackPaymentView(View):
             'transcript': transcript,
             'paystack_public_key': paystack_public_key,
         })
+
+@csrf_exempt
+def paystack_webhook(request):
+    if request.method == 'POST':
+        event = json.loads(request.body.decode('utf-8'))
+        if event.get('event') == 'charge.success':
+            data = event.get('data', {})
+            reference = data.get('reference')
+            email = data.get('customer', {}).get('email')
+            amount = data.get('amount') / 100  # kobo to naira
+            # Find transcript by reference
+            transcript = TranscriptRequest.objects.filter(payment_reference=reference, student__email=email).first()
+            if transcript and not transcript.payment_confirmed:
+                transcript.payment_confirmed = True
+                transcript.status = 'confirmed'
+                transcript.save()
+                # Notify user
+                email_body = render_to_string('emails/notification_email.html', {
+                    'user': transcript.student,
+                    'message': f'Your payment of ₦{amount} was successful. Your transcript request is now confirmed.',
+                    'site_name': 'Transcript Tower',
+                })
+                send_mail(
+                    'Transcript Payment Confirmed',
+                    '',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [transcript.student.email],
+                    html_message=email_body,
+                    fail_silently=True,
+                )
+            return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'ignored'})
+    return JsonResponse({'error': 'Invalid method'}, status=405)
