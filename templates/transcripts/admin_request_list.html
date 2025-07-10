@@ -25,7 +25,11 @@
       <td>{% if req.price %}₦{{ req.price }}{% else %}-{% endif %}</td>
       <td>{% if req.payment_confirmed %}Confirmed{% elif req.status == 'ready_for_payment' %}Pending{% else %}-{% endif %}</td>
       <td>{{ req.created_at|date:"Y-m-d H:i" }}</td>
-      <td><a href="{% url 'transcripts:admin_request_update' req.id %}" class="btn btn-sm btn-primary">Update</a></td>
+      <td><a href="{% url 'transcripts:admin_request_update' req.id %}" class="btn btn-sm btn-primary">Update</a>
+      {% if not req.payment_confirmed and req.status == 'ready_for_payment' %}
+        <a href="{% url 'transcripts:confirm_manual_payment' req.id %}" class="btn btn-sm btn-warning ms-1">Confirm Manual Payment</a>
+      {% endif %}
+      </td>
     </tr>
     {% empty %}
     <tr><td colspan="8">No requests yet.</td></tr>

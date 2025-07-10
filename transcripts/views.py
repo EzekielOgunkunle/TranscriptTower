@@ -132,3 +132,28 @@ def paystack_webhook(request):
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'ignored'})
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+@method_decorator([login_required, user_passes_test(lambda u: u.is_superuser)], name='dispatch')
+def confirm_manual_payment(request, pk):
+    transcript = TranscriptRequest.objects.get(pk=pk)
+    if request.method == 'POST' and not transcript.payment_confirmed:
+        transcript.payment_confirmed = True
+        transcript.status = 'confirmed'
+        transcript.save()
+        # Notify user
+        email_body = render_to_string('emails/notification_email.html', {
+            'user': transcript.student,
+            'message': f'Your manual payment for transcript request #{transcript.id} has been confirmed by admin.',
+            'site_name': 'Transcript Tower',
+        })
+        send_mail(
+            'Manual Payment Confirmed',
+            '',
+            settings.DEFAULT_FROM_EMAIL,
+            [transcript.student.email],
+            html_message=email_body,
+            fail_silently=True,
+        )
+        messages.success(request, 'Manual payment confirmed and user notified.')
+        return redirect('transcripts:admin_request_list')
+    return render(request, 'transcripts/confirm_manual_payment.html', {'transcript': transcript})
