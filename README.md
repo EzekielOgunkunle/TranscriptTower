@@ -1,52 +1,57 @@
 # Transcript Tower
 
-Transcript Tower is a robust Django 5 web application for managing student transcript requests. It features user registration with email/OTP verification, a flexible transcript request workflow, Paystack and manual payment options, admin dashboard, PDF upload/delivery, notifications, and a modern Bootstrap 5 UI with a red-brown and orange-cream theme.
+Transcript Tower is a Django web app that makes it easy for students to request, pay for, and receive their transcripts. It supports both online (Paystack) and manual payments, and gives admins a simple dashboard to manage everything.
 
-## Features
-- User registration & verification
-- Transcript request workflow (soft/printed)
-- Paystack & manual payment integration
-- Admin dashboard & workflow management
-- PDF upload & delivery (WeasyPrint)
-- Notifications & email integration (django-anymail)
-- Modern, responsive UI (Bootstrap 5, crispy forms)
-- Security best practices
-- Unit tests & extensibility
+## What’s Inside
 
-## Setup
-1. Create and activate a virtual environment:
+- Easy user registration with email/OTP verification
+- Request soft or printed transcripts
+- Pay securely online or use manual payment
+- Admin dashboard for managing requests and payments
+- Upload and deliver transcripts as PDFs
+- Email notifications for status updates
+- Clean, responsive Bootstrap 5 design
+- Security best practices built-in
+- Ready for extension and customization
+
+## Getting Started
+
+1. **Set up your environment:**
    ```sh
    python3 -m venv venv
    source venv/bin/activate
    ```
-2. Install dependencies:
+2. **Install dependencies:**
    ```sh
    pip install -r requirements.txt
    ```
-3. Configure PostgreSQL in `transcript_tower/settings.py`.
-4. Run migrations:
+3. **Configure your database** (PostgreSQL) in `transcript_tower/settings.py`.
+4. **Apply migrations:**
    ```sh
    python manage.py migrate
    ```
-5. Create a superuser:
+5. **Create an admin user:**
    ```sh
    python manage.py createsuperuser
    ```
-6. Start the server:
+6. **Run the server:**
    ```sh
    python manage.py runserver
    ```
 
-## Testing
-Run all tests with:
+## Running Tests
+
+To run all tests:
 ```sh
 python manage.py test
 ```
 
 ## Customization
-- Update Bootstrap theme in `static/` for red-brown and orange-cream colors.
-- All forms use crispy forms and Bootstrap 5.
-- See code comments for extensibility tips.
+
+- Change the Bootstrap theme in `static/` to adjust colors.
+- All forms use crispy forms and Bootstrap 5 for a modern look.
+- The code is well-commented for easy extension.
 
 ---
-For more, see the project documentation and code comments.
+
+For more details, check the code and comments. If you have questions or want to contribute, feel free to open an issue or pull request!
