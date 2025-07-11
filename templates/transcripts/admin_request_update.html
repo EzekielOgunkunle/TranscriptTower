@@ -1,12 +1,47 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block title %}Update Transcript Request{% endblock %}
+{% block title %}Transcript Request Details{% endblock %}
 {% block content %}
-<h2>Update Transcript Request #{{ transcript.id }}</h2>
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form|crispy }}
-  <button type="submit" class="btn btn-success">Save Changes</button>
-  <a href="{% url 'transcripts:admin_request_list' %}" class="btn btn-secondary">Back</a>
-</form>
+<div class="container mt-4">
+  <h2>Transcript Request #{{ transcript.id }} Details</h2>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <h5>Student Information</h5>
+      <ul class="list-group mb-3">
+        <li class="list-group-item"><strong>Full Name:</strong> {{ transcript.student.get_full_name }}</li>
+        <li class="list-group-item"><strong>Matric Number:</strong> {{ transcript.student.matric_number }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ transcript.student.email }}</li>
+        <li class="list-group-item"><strong>Phone:</strong> {{ transcript.student.phone }}</li>
+        <li class="list-group-item"><strong>Program:</strong> {{ transcript.student.program }}</li>
+        <li class="list-group-item"><strong>Graduation Year:</strong> {{ transcript.student.graduation_year }}</li>
+        <li class="list-group-item"><strong>Current Place:</strong> {{ transcript.student.current_place }}</li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h5>Transcript Request Info</h5>
+      <ul class="list-group mb-3">
+        <li class="list-group-item"><strong>Type:</strong> {{ transcript.get_request_type_display }}</li>
+        <li class="list-group-item"><strong>Status:</strong> {{ transcript.get_status_display }}</li>
+        <li class="list-group-item"><strong>Price:</strong> {% if transcript.price %}₦{{ transcript.price }}{% else %}-{% endif %}</li>
+        <li class="list-group-item"><strong>Payment:</strong> {% if transcript.payment_confirmed %}Confirmed{% elif transcript.status == 'ready_for_payment' %}Pending{% else %}-{% endif %}</li>
+        <li class="list-group-item"><strong>Admin Feedback:</strong> {{ transcript.admin_feedback|default:"-" }}</li>
+        <li class="list-group-item"><strong>Created:</strong> {{ transcript.created_at|date:"Y-m-d H:i" }}</li>
+        <li class="list-group-item"><strong>Updated:</strong> {{ transcript.updated_at|date:"Y-m-d H:i" }}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <form method="post" enctype="multipart/form-data" class="mb-3">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'transcripts:admin_request_list' %}" class="btn btn-secondary">Back</a>
+      </form>
+      {% if transcript.pdf_file %}
+        <a href="{{ transcript.pdf_file.url }}" class="btn btn-outline-primary" target="_blank">View Uploaded PDF</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}
