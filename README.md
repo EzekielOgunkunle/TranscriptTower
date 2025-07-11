@@ -14,6 +14,15 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 - Security best practices built-in
 - Ready for extension and customization
 
+## New Features (July 2025)
+
+- Student dashboard: Filter transcript requests by status (pending, ready, delivered, etc.).
+- Admin dashboard: Advanced filtering and search (by status, student username/email, and date range).
+- Notifications: Mark all as read with one click.
+- Dashboards: Modern Bootstrap 5 cards, summaries, and recent activity for both students and admins.
+
+---
+
 ## Getting Started
 
 1. **Set up your environment:**

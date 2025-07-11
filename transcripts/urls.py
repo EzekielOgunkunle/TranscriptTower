@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     TranscriptRequestCreateView, TranscriptRequestListView, AdminTranscriptListView, AdminTranscriptUpdateView,
     PaystackPaymentView, TranscriptDownloadView, paystack_webhook, confirm_manual_payment, contact,
-    user_notifications, mark_notification_read
+    user_notifications, mark_notification_read, mark_all_notifications_read
 )
 
 app_name = 'transcripts'
@@ -19,4 +19,5 @@ urlpatterns = [
     path('contact/', contact, name='contact'),
     path('notifications/', user_notifications, name='user_notifications'),
     path('notifications/read/<int:pk>/', mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark-all-read/', mark_all_notifications_read, name='mark_all_notifications_read'),
 ]

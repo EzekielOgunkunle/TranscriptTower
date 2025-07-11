@@ -1,7 +1,137 @@
 {% extends 'base.html' %}
 {% block title %}My Transcript Requests{% endblock %}
 {% block content %}
-<h2>My Transcript Requests</h2>
+<div class="container mt-4">
+  <h2 class="mb-3">My Dashboard</h2>
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Total Requests</h5>
+          <p class="card-text fs-4">{{ total_requests }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-warning mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Pending</h5>
+          <p class="card-text fs-4">{{ pending_requests }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-info mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Ready for Payment</h5>
+          <p class="card-text fs-4">{{ ready_requests }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Delivered</h5>
+          <p class="card-text fs-4">{{ delivered_requests }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Recent Notifications</div>
+        <ul class="list-group list-group-flush">
+          {% for n in recent_notifications %}
+            <li class="list-group-item d-flex justify-content-between align-items-center {% if not n.read %}list-group-item-warning{% endif %}">
+              <span>{{ n.message|truncatechars:60 }}</span>
+              <small class="text-muted">{{ n.created_at|date:"M d, H:i" }}</small>
+            </li>
+          {% empty %}
+            <li class="list-group-item">No notifications.</li>
+          {% endfor %}
+        </ul>
+        <div class="card-footer text-end">
+          <a href="{% url 'transcripts:user_notifications' %}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 d-flex align-items-end justify-content-end">
+      <a href="{% url 'transcripts:request_create' %}" class="btn btn-lg btn-primary">New Transcript Request</a>
+    </div>
+  </div>
+  <h3>My Transcript Requests</h3>
+  <form method="get" class="mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-auto">
+        <label for="status" class="form-label mb-0">Filter by status:</label>
+      </div>
+      <div class="col-auto">
+        <select name="status" id="status" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">All</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="ready_for_payment" {% if status_filter == 'ready_for_payment' %}selected{% endif %}>Ready for Payment</option>
+          <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+          <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
+        </select>
+      </div>
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Payment</th>
+          <th>Admin Feedback</th>
+          <th>Download</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.get_request_type_display }}</td>
+          <td>
+            <span class="badge {% if req.status == 'pending' %}bg-secondary{% elif req.status == 'ready_for_payment' %}bg-warning text-dark{% elif req.status == 'confirmed' %}bg-info text-dark{% elif req.status == 'delivered' %}bg-success{% else %}bg-light text-dark{% endif %}">
+              {{ req.get_status_display }}
+            </span>
+          </td>
+          <td>{% if req.price %}₦{{ req.price }}{% else %}-{% endif %}</td>
+          <td>{% if req.payment_confirmed %}<span class="badge bg-success">Confirmed</span>{% elif req.status == 'ready_for_payment' %}<span class="badge bg-warning text-dark">Pending</span>{% else %}-{% endif %}</td>
+          <td>{{ req.admin_feedback|default:"-" }}</td>
+          <td>
+            {% if req.pdf_file %}
+              <a href="{% url 'transcripts:download' req.id %}" class="btn btn-sm btn-success">Download PDF</a>
+            {% else %}-{% endif %}
+          </td>
+          <td>
+            {% if req.status == 'ready_for_payment' and not req.payment_confirmed %}
+              {% if req.price %}
+                <a href="{% url 'transcripts:paystack_payment' req.id %}" class="btn btn-sm btn-primary mb-1">Pay with Paystack</a>
+                <form method="post" action="" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="button" class="btn btn-sm btn-warning" onclick="alert('Please follow the manual payment instructions sent to your email or contact admin.')">Manual Payment</button>
+                </form>
+              {% else %}
+                <span class="text-danger">Awaiting admin to set price</span>
+              {% endif %}
+            {% elif req.status == 'pending' %}
+              <span class="text-muted">Awaiting admin review</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No requests yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 <table class="table table-striped">
   <thead>
     <tr>

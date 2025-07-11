@@ -3,6 +3,9 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Notifications</h2>
+    <div class="mb-3 text-end">
+        <a href="{% url 'transcripts:mark_all_notifications_read' %}" class="btn btn-sm btn-outline-primary">Mark all as read</a>
+    </div>
     <div class="list-group mt-3">
         {% for notification in notifications %}
             <div class="list-group-item {% if not notification.read %}list-group-item-warning{% endif %}">

@@ -1,11 +1,10 @@
 # User dashboard notifications view
 from .notifications import Notification
-@login_required
+from django.contrib.auth.decorators import login_required
 def user_notifications(request):
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'transcripts/user_notifications.html', {'notifications': notifications})
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views import View
@@ -46,9 +45,22 @@ class TranscriptRequestCreateView(View):
 class TranscriptRequestListView(View):
     def get(self, request):
         requests = TranscriptRequest.objects.filter(student=request.user).order_by('-created_at')
-        # Show unread notification count in dashboard context
         unread_notification_count = Notification.objects.filter(user=request.user, read=False).count()
-        return render(request, 'transcripts/request_list.html', {'requests': requests, 'unread_notification_count': unread_notification_count})
+        # Dashboard summary
+        total = requests.count()
+        pending = requests.filter(status='pending').count()
+        ready = requests.filter(status='ready_for_payment').count()
+        delivered = requests.filter(status='delivered').count()
+        recent_notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
+        return render(request, 'transcripts/request_list.html', {
+            'requests': requests,
+            'unread_notification_count': unread_notification_count,
+            'total_requests': total,
+            'pending_requests': pending,
+            'ready_requests': ready,
+            'delivered_requests': delivered,
+            'recent_notifications': recent_notifications,
+        })
 # Mark notification as read
 @login_required
 def mark_notification_read(request, pk):
@@ -56,6 +68,11 @@ def mark_notification_read(request, pk):
     if notification:
         notification.read = True
         notification.save()
+    return redirect('transcripts:user_notifications')
+
+@login_required
+def mark_all_notifications_read(request):
+    Notification.objects.filter(user=request.user, read=False).update(read=True)
     return redirect('transcripts:user_notifications')
 
 @method_decorator(login_required, name='dispatch')
@@ -71,8 +88,42 @@ class TranscriptDownloadView(View):
 @method_decorator([login_required, user_passes_test(lambda u: u.is_superuser)], name='dispatch')
 class AdminTranscriptListView(View):
     def get(self, request):
-        requests = TranscriptRequest.objects.all().order_by('-created_at')
-        return render(request, 'transcripts/admin_request_list.html', {'requests': requests})
+        status_filter = request.GET.get('status', '')
+        student_query = request.GET.get('student', '').strip()
+        date_from = request.GET.get('date_from', '')
+        date_to = request.GET.get('date_to', '')
+        requests = TranscriptRequest.objects.all()
+        if status_filter:
+            requests = requests.filter(status=status_filter)
+        if student_query:
+            requests = requests.filter(student__username__icontains=student_query) | requests.filter(student__email__icontains=student_query)
+        if date_from:
+            requests = requests.filter(created_at__date__gte=date_from)
+        if date_to:
+            requests = requests.filter(created_at__date__lte=date_to)
+        requests = requests.order_by('-created_at')
+        # Dashboard summary
+        total = TranscriptRequest.objects.count()
+        pending = TranscriptRequest.objects.filter(status='pending').count()
+        ready = TranscriptRequest.objects.filter(status='ready_for_payment').count()
+        confirmed = TranscriptRequest.objects.filter(status='confirmed').count()
+        delivered = TranscriptRequest.objects.filter(status='delivered').count()
+        manual_payments = TranscriptRequest.objects.filter(status='ready_for_payment', payment_confirmed=False).count()
+        recent = requests[:5]
+        return render(request, 'transcripts/admin_request_list.html', {
+            'requests': requests,
+            'total_requests': total,
+            'pending_requests': pending,
+            'ready_requests': ready,
+            'confirmed_requests': confirmed,
+            'delivered_requests': delivered,
+            'manual_payments': manual_payments,
+            'recent_requests': recent,
+            'status_filter': status_filter,
+            'student_query': student_query,
+            'date_from': date_from,
+            'date_to': date_to,
+        })
 
 @method_decorator([login_required, user_passes_test(lambda u: u.is_superuser)], name='dispatch')
 class AdminTranscriptUpdateView(View):
@@ -160,7 +211,8 @@ def paystack_webhook(request):
         return JsonResponse({'status': 'ignored'})
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
-@method_decorator([login_required, user_passes_test(lambda u: u.is_superuser)], name='dispatch')
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def confirm_manual_payment(request, pk):
     transcript = TranscriptRequest.objects.get(pk=pk)
     if request.method == 'POST' and not transcript.payment_confirmed:
@@ -189,7 +241,6 @@ def confirm_manual_payment(request, pk):
         messages.success(request, 'Manual payment confirmed and user notified.')
         return redirect('transcripts:admin_request_list')
     return render(request, 'transcripts/confirm_manual_payment.html', {'transcript': transcript})
-
 def contact(request):
     from django.core.mail import send_mail
     from django.conf import settings
