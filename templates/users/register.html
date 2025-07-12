@@ -3,6 +3,9 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <h2>Register</h2>
+<div class="alert alert-info">
+  <strong>Important:</strong> Please enter your <b>first name</b> and <b>last name</b> exactly as they appear on your official ID card. This will be used for transcript processing.
+</div>
 <form method="post">
   {% csrf_token %}
   {{ form|crispy }}
