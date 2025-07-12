@@ -1,27 +1,27 @@
 /* Custom Bootstrap overrides for Transcript Tower */
-:root {
+/* :root {
   --bs-primary: #a94442; /* red-brown */
   --bs-secondary: #ffecd2; /* orange-cream */
   --bs-body-bg: #fff8f3;
   --bs-body-color: #3d1f14;
-}
+} */
 
-body {
+/* body {
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
-}
+} */
 
-.btn-primary {
+/* .btn-primary {
   background-color: var(--bs-primary);
   border-color: var(--bs-primary);
-}
+} */
 
-.btn-secondary {
+/* .btn-secondary {
   background-color: var(--bs-secondary);
   border-color: var(--bs-secondary);
   color: #a94442;
-}
+} */
 
 .navbar {
-  background: linear-gradient(90deg, #a94442 0%, #ffecd2 100%);
+  background: linear-gradient(90deg, #a94442 0%, #3a0000 100%);
 }
