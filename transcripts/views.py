@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import json
+from .audit import ActivityLog
 
 # Only allow non-admins to request transcripts
 def is_not_admin(user):
@@ -173,7 +174,17 @@ class AdminTranscriptUpdateView(View):
         transcript = TranscriptRequest.objects.get(pk=pk)
         form = AdminTranscriptUpdateForm(request.POST, request.FILES, instance=transcript)
         if form.is_valid():
+            old_status = transcript.status
             form.save()
+            if transcript.status != old_status:
+                ActivityLog.objects.create(
+                    user=request.user,
+                    action='status_change',
+                    object_type='TranscriptRequest',
+                    object_id=str(transcript.id),
+                    description=f"Status changed from {old_status} to {transcript.status}",
+                    extra_data={'old_status': old_status, 'new_status': transcript.status}
+                )
             # If status is set to 'ready_for_payment', notify student
             if transcript.status == 'ready_for_payment':
                 from django.core.mail import send_mail

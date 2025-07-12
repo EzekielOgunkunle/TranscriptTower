@@ -4,6 +4,7 @@ from .forms import AdminTranscriptUpdateForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+from .audit import ActivityLog
 
 @admin.register(TranscriptRequest)
 class TranscriptRequestAdmin(admin.ModelAdmin):
@@ -91,3 +92,32 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
         self.message_user(request, "Selected transcript PDFs deleted. You can now re-upload.")
     delete_pdf.short_description = 'Delete attached PDF(s) for re-upload'
     actions.append('delete_pdf')
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        ActivityLog.objects.create(
+            user=request.user,
+            action='update' if change else 'create',
+            object_type='TranscriptRequest',
+            object_id=str(obj.id),
+            description=f"{'Updated' if change else 'Created'} transcript request #{obj.id}",
+            extra_data={k: v for k, v in form.cleaned_data.items()}
+        )
+
+    def delete_model(self, request, obj):
+        ActivityLog.objects.create(
+            user=request.user,
+            action='delete',
+            object_type='TranscriptRequest',
+            object_id=str(obj.id),
+            description=f"Deleted transcript request #{obj.id}",
+        )
+        super().delete_model(request, obj)
+
+@admin.register(ActivityLog)
+class ActivityLogAdmin(admin.ModelAdmin):
+    list_display = ('timestamp', 'user', 'action', 'object_type', 'object_id', 'description')
+    list_filter = ('action', 'object_type', 'user')
+    search_fields = ('description', 'object_type', 'object_id', 'user__username', 'user__email')
+    readonly_fields = ('timestamp',)
+    ordering = ('-timestamp',)
