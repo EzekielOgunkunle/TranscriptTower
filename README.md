@@ -13,6 +13,13 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 - Clean, responsive Bootstrap 5 design
 - Security best practices built-in
 - Ready for extension and customization
+- REST API for transcript requests (Django REST Framework)
+- In-browser PDF preview for transcripts (user & admin dashboards)
+- Automated email reminders for pending payments
+- Full request timeline/history (status & comments)
+- Audit trail for all admin actions
+- Bulk admin actions (PDF ZIP download, notifications)
+- Accessible, mobile-friendly UI (Bootstrap 5)
 
 ## New Features (July 2025)
 
@@ -20,6 +27,13 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 - Admin dashboard: Advanced filtering and search (by status, student username/email, and date range).
 - Notifications: Mark all as read with one click.
 - Dashboards: Modern Bootstrap 5 cards, summaries, and recent activity for both students and admins.
+- **API:** Access your transcript requests via `/transcripts/api/` (see code for details; authentication required).
+- **PDF Preview:** View transcript PDFs in-browser before downloading.
+- **Reminders:** Automated email reminders for pending payments.
+- **Timeline:** See full request history and status changes.
+- **Audit Trail:** All admin actions are logged for security.
+- **Bulk Actions:** Download multiple PDFs as ZIP, send notifications, and more.
+- **Accessibility:** Improved mobile and accessibility support.
 
 ---
 
