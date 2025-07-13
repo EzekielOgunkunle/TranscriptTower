@@ -45,5 +45,22 @@ class TranscriptRequest(models.Model):
     payment_reference = models.CharField(max_length=100, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
+
     def __str__(self):
         return f"Transcript Request #{self.id} by {self.student}"
+
+
+# Timeline/history for each transcript request
+class TranscriptRequestTimeline(models.Model):
+    request = models.ForeignKey(TranscriptRequest, on_delete=models.CASCADE, related_name='timeline_entries')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=30, blank=True)  # Status at this point (optional)
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        who = self.user.full_name if self.user else 'System'
+        return f"[{self.created_at:%Y-%m-%d %H:%M}] {who}: {self.status or ''} {self.comment[:30]}"

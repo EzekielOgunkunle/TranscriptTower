@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TranscriptRequest
+from .models import TranscriptRequest, TranscriptRequestTimeline
 from .forms import AdminTranscriptUpdateForm
 from django.core.mail import send_mail
 from django.conf import settings
@@ -200,3 +200,11 @@ class ActivityLogAdmin(admin.ModelAdmin):
     search_fields = ('description', 'object_type', 'object_id', 'user__username', 'user__email')
     readonly_fields = ('timestamp',)
     ordering = ('-timestamp',)
+
+@admin.register(TranscriptRequestTimeline)
+class TranscriptRequestTimelineAdmin(admin.ModelAdmin):
+    list_display = ('request', 'created_at', 'user', 'status', 'comment')
+    list_filter = ('status', 'user')
+    search_fields = ('comment', 'status', 'user__username', 'user__email', 'request__id')
+    readonly_fields = ('created_at',)
+    ordering = ('-created_at',)
