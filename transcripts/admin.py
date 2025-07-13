@@ -22,6 +22,13 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
         for req in queryset:
             req.status = 'ready_for_payment'
             req.save()
+            # Timeline log
+            TranscriptRequestTimeline.objects.create(
+                request=req,
+                user=request.user,
+                status='ready_for_payment',
+                comment='Marked as ready for payment (bulk action)'
+            )
             # Audit log
             ActivityLog.objects.create(
                 user=request.user,
@@ -51,6 +58,13 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
         for req in queryset:
             req.status = 'processing'
             req.save()
+            # Timeline log
+            TranscriptRequestTimeline.objects.create(
+                request=req,
+                user=request.user,
+                status='processing',
+                comment='Marked as processing (bulk action)'
+            )
             # Audit log
             ActivityLog.objects.create(
                 user=request.user,
@@ -80,6 +94,13 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
         for req in queryset:
             req.status = 'delivered'
             req.save()
+            # Timeline log
+            TranscriptRequestTimeline.objects.create(
+                request=req,
+                user=request.user,
+                status='delivered',
+                comment='Marked as delivered (bulk action)'
+            )
             # Audit log
             ActivityLog.objects.create(
                 user=request.user,
@@ -164,6 +185,13 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
+        # Timeline log
+        TranscriptRequestTimeline.objects.create(
+            request=obj,
+            user=request.user,
+            status=obj.status,
+            comment=f"{'Updated' if change else 'Created'} transcript request via admin."
+        )
         ActivityLog.objects.create(
             user=request.user,
             action='update' if change else 'create',
@@ -174,6 +202,13 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
         )
 
     def delete_model(self, request, obj):
+        # Timeline log
+        TranscriptRequestTimeline.objects.create(
+            request=obj,
+            user=request.user,
+            status=obj.status,
+            comment="Transcript request deleted via admin."
+        )
         ActivityLog.objects.create(
             user=request.user,
             action='delete',

@@ -189,6 +189,8 @@ class AdminTranscriptUpdateView(View):
     def get(self, request, pk):
         transcript = TranscriptRequest.objects.get(pk=pk)
         form = AdminTranscriptUpdateForm(instance=transcript)
+        # Prefetch timeline entries for template
+        transcript.timeline_entries.all()  # Ensures related_name is available
         return render(request, 'transcripts/admin_request_update.html', {'form': form, 'transcript': transcript})
 
     def post(self, request, pk):
@@ -197,7 +199,15 @@ class AdminTranscriptUpdateView(View):
         if form.is_valid():
             old_status = transcript.status
             form.save()
+            from .models import TranscriptRequestTimeline
+            # Timeline log for status change
             if transcript.status != old_status:
+                TranscriptRequestTimeline.objects.create(
+                    request=transcript,
+                    user=request.user,
+                    status=transcript.status,
+                    comment=f"Status changed from {old_status} to {transcript.status} via admin."
+                )
                 ActivityLog.objects.create(
                     user=request.user,
                     action='status_change',
@@ -206,6 +216,13 @@ class AdminTranscriptUpdateView(View):
                     description=f"Status changed from {old_status} to {transcript.status}",
                     extra_data={'old_status': old_status, 'new_status': transcript.status}
                 )
+            # Timeline log for update
+            TranscriptRequestTimeline.objects.create(
+                request=transcript,
+                user=request.user,
+                status=transcript.status,
+                comment="Transcript request updated via admin."
+            )
             # If status is set to 'ready_for_payment', notify student
             if transcript.status == 'ready_for_payment':
                 from django.core.mail import send_mail

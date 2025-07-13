@@ -43,5 +43,23 @@
       {% endif %}
     </div>
   </div>
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <h5>Request Timeline / History</h5>
+      <ul class="list-group mb-3">
+        {% for entry in transcript.timeline_entries.all %}
+          <li class="list-group-item">
+            <strong>{{ entry.created_at|date:"Y-m-d H:i" }}</strong> —
+            <span class="text-primary">{{ entry.user.full_name if entry.user else 'System' }}</span>
+            {% if entry.status %}<span class="badge bg-info text-dark ms-2">{{ entry.status|capfirst }}</span>{% endif %}
+            <br>
+            <span>{{ entry.comment }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No timeline entries yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 </div>
 {% endblock %}
