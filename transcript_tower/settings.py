@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'users',
     'transcripts',
+    'rest_framework',
     # Add your apps here
 ]
 

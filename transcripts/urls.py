@@ -1,11 +1,16 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
     TranscriptRequestCreateView, TranscriptRequestListView, AdminTranscriptListView, AdminTranscriptUpdateView,
     PaystackPaymentView, TranscriptDownloadView, paystack_webhook, confirm_manual_payment, contact,
     user_notifications, mark_notification_read, mark_all_notifications_read
 )
+from .api_views import TranscriptRequestViewSet
 
 app_name = 'transcripts'
+
+router = DefaultRouter()
+router.register(r'requests', TranscriptRequestViewSet, basename='transcriptrequest')
 
 urlpatterns = [
     path('request/', TranscriptRequestCreateView.as_view(), name='request_create'),
@@ -20,4 +25,5 @@ urlpatterns = [
     path('notifications/', user_notifications, name='user_notifications'),
     path('notifications/read/<int:pk>/', mark_notification_read, name='mark_notification_read'),
     path('notifications/mark-all-read/', mark_all_notifications_read, name='mark_all_notifications_read'),
+    path('api/', include(router.urls)),
 ]
