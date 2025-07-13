@@ -70,6 +70,9 @@ class TranscriptRequestListView(View):
         ready = requests_qs.filter(status='ready_for_payment').count()
         delivered = requests_qs.filter(status='delivered').count()
         recent_notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
+        # Add timeline entries to each request for display
+        for req in requests_page:
+            req.timeline_entries_list = req.timeline_entries.all()
         return render(request, 'transcripts/request_list.html', {
             'requests': requests_page,
             'unread_notification_count': unread_notification_count,

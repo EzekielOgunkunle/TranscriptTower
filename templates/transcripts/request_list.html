@@ -125,6 +125,26 @@
             {% endif %}
           </td>
         </tr>
+        <tr>
+          <td colspan="8">
+            <div class="timeline-container bg-light p-2 rounded">
+              <strong>Request Timeline / History:</strong>
+              <ul class="list-group mb-0">
+                {% for entry in req.timeline_entries_list %}
+                  <li class="list-group-item py-1 px-2">
+                    <span class="text-muted small">{{ entry.created_at|date:"Y-m-d H:i" }}</span>
+                    — <span class="fw-bold">{{ entry.user.full_name if entry.user else 'System' }}</span>
+                    {% if entry.status %}<span class="badge bg-info text-dark ms-2">{{ entry.status|capfirst }}</span>{% endif %}
+                    <br>
+                    <span>{{ entry.comment }}</span>
+                  </li>
+                {% empty %}
+                  <li class="list-group-item py-1 px-2">No timeline entries yet.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </td>
+        </tr>
         {% empty %}
         <tr><td colspan="8">No requests yet.</td></tr>
         {% endfor %}
