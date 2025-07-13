@@ -1,6 +1,7 @@
 # User dashboard notifications view
 from .notifications import Notification
 from django.contrib.auth.decorators import login_required
+from django.db import models
 def user_notifications(request):
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'transcripts/user_notifications.html', {'notifications': notifications})
@@ -112,6 +113,9 @@ class AdminTranscriptListView(View):
         student_query = request.GET.get('student', '').strip()
         date_from = request.GET.get('date_from', '')
         date_to = request.GET.get('date_to', '')
+        grad_year = request.GET.get('graduation_year', '')
+        program = request.GET.get('program', '')
+        payment_status = request.GET.get('payment_status', '')
         per_page = request.GET.get('per_page', 10)
         try:
             per_page = int(per_page)
@@ -123,7 +127,21 @@ class AdminTranscriptListView(View):
         if status_filter:
             requests_qs = requests_qs.filter(status=status_filter)
         if student_query:
-            requests_qs = requests_qs.filter(student__username__icontains=student_query) | requests_qs.filter(student__email__icontains=student_query)
+            requests_qs = requests_qs.filter(
+                models.Q(student__username__icontains=student_query) |
+                models.Q(student__email__icontains=student_query) |
+                models.Q(student__full_name__icontains=student_query) |
+                models.Q(matric_number__icontains=student_query)
+            )
+        if grad_year:
+            requests_qs = requests_qs.filter(student__graduation_year=grad_year)
+        if program:
+            requests_qs = requests_qs.filter(student__program__icontains=program)
+        if payment_status:
+            if payment_status == 'confirmed':
+                requests_qs = requests_qs.filter(payment_confirmed=True)
+            elif payment_status == 'pending':
+                requests_qs = requests_qs.filter(payment_confirmed=False)
         if date_from:
             requests_qs = requests_qs.filter(created_at__date__gte=date_from)
         if date_to:
@@ -161,6 +179,9 @@ class AdminTranscriptListView(View):
             'date_to': date_to,
             'per_page': per_page,
             'paginator': paginator,
+            'graduation_year': grad_year,
+            'program': program,
+            'payment_status': payment_status,
         })
 
 @method_decorator([login_required, user_passes_test(lambda u: u.is_superuser)], name='dispatch')
