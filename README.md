@@ -33,6 +33,7 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 - **Timeline:** See full request history and status changes.
 - **Audit Trail:** All admin actions are logged for security.
 - **Bulk Actions:** Download multiple PDFs as ZIP, send notifications, and more.
+- **PWA:** Installable on mobile/desktop, works offline, and supports add-to-home-screen.
 - **Accessibility:** Improved mobile and accessibility support.
 
 ---
