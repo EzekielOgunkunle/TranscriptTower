@@ -106,7 +106,7 @@
           <td>{{ req.admin_feedback|default:"-" }}</td>
           <td>
             {% if req.pdf_file %}
-              <a href="{%- url 'transcripts:download' req.id -%}" class="btn btn-sm btn-success">Download PDF</a>
+              <a href="{% url 'transcripts:download' req.id %}" class="btn btn-sm btn-success">Download PDF</a>
               <button type="button" class="btn btn-sm btn-outline-primary ms-1" data-bs-toggle="modal" data-bs-target="#pdfPreviewModal{{ req.id }}">Preview</button>
               <!-- PDF Preview Modal -->
               <div class="modal fade" id="pdfPreviewModal{{ req.id }}" tabindex="-1" aria-labelledby="pdfPreviewModalLabel{{ req.id }}" aria-hidden="true">
@@ -151,7 +151,9 @@
                 {% for entry in req.timeline_entries_list %}
                   <li class="list-group-item py-1 px-2">
                     <span class="text-muted small">{{ entry.created_at|date:"Y-m-d H:i" }}</span>
-                    — <span class="fw-bold">{{ entry.user.full_name if entry.user else 'System' }}</span>
+                    — <span class="fw-bold">
+                      {% if entry.user %}{{ entry.user.full_name }}{% else %}System{% endif %}
+                    </span>
                     {% if entry.status %}<span class="badge bg-info text-dark ms-2">{{ entry.status|capfirst }}</span>{% endif %}
                     <br>
                     <span>{{ entry.comment }}</span>

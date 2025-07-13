@@ -6,8 +6,13 @@
 <p><strong>Amount:</strong> ₦{{ transcript.price|default:'(Set by admin)' }}</p>
 {% if transcript.price %}
   <form id="paystack-form">
-    <button type="button" class="btn btn-primary" id="paystack-pay-btn">Pay Now with Paystack</button>
+    <button type="button" class="btn btn-primary" id="paystack-pay-btn" {% if transcript.payment_confirmed %}disabled{% endif %}>
+      {% if transcript.payment_confirmed %}Payment Confirmed{% else %}Pay Now with Paystack{% endif %}
+    </button>
   </form>
+  {% if transcript.payment_confirmed %}
+    <div class="alert alert-success mt-3">Payment has been confirmed. You do not need to pay again.</div>
+  {% endif %}
   <div id="paystack-status" class="mt-3"></div>
 {% else %}
   <div class="alert alert-warning">Admin has not set the price yet. Please check back later.</div>
@@ -25,7 +30,7 @@ document.getElementById('paystack-pay-btn').onclick = function() {
     email: '{{ transcript.student.email }}',
     amount: amount * 100, // kobo
     currency: 'NGN',
-    ref: 'TRX{{ transcript.id }}-{{ transcript.student.id }}-{{ transcript.created_at|date:"YmdHis" }}',
+    ref: '{{ paystack_reference }}',
     callback: function(response){
       document.getElementById('paystack-status').innerHTML = '<div class="alert alert-success">Payment successful! Reference: ' + response.reference + '</div>';
       // Optionally, send AJAX to backend to confirm payment

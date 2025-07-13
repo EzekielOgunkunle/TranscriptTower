@@ -150,5 +150,5 @@ EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 DEFAULT_FROM_EMAIL = 'noreply@transcripttower.local'
 
 # Paystack keys (set your real keys in production)
-PAYSTACK_PUBLIC_KEY = 'pk_live_3c4308e92b8e7de03847e89178825fcead523bb0'
-PAYSTACK_SECRET_KEY = 'sk_live_e1269c0f1016bd8f60e9147b1f2e33e012cb2341'
+PAYSTACK_PUBLIC_KEY = 'pk_test_772a1ad34b334d08b4042b0ad6948cf1e94d8876'
+PAYSTACK_SECRET_KEY = 'sk_test_77124ecb320db1882ae836981305891267945929'

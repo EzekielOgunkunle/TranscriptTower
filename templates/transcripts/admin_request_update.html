@@ -68,7 +68,7 @@
         {% for entry in transcript.timeline_entries.all %}
           <li class="list-group-item">
             <strong>{{ entry.created_at|date:"Y-m-d H:i" }}</strong> —
-            <span class="text-primary">{{ entry.user.full_name if entry.user else 'System' }}</span>
+            <span class="text-primary">{% if entry.user %}{{ entry.user.full_name }}{% else %}System{% endif %}</span>
             {% if entry.status %}<span class="badge bg-info text-dark ms-2">{{ entry.status|capfirst }}</span>{% endif %}
             <br>
             <span>{{ entry.comment }}</span>

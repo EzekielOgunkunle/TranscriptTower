@@ -257,9 +257,18 @@ class PaystackPaymentView(View):
     def get(self, request, pk):
         transcript = TranscriptRequest.objects.get(pk=pk)
         paystack_public_key = getattr(settings, 'PAYSTACK_PUBLIC_KEY', '')
+        # Generate a unique reference if not set
+        if not transcript.payment_reference:
+            import uuid
+            ref = f"TRX{transcript.id}-{transcript.student.id}-{uuid.uuid4().hex[:8]}"
+            transcript.payment_reference = ref
+            transcript.save(update_fields=["payment_reference"])
+        else:
+            ref = transcript.payment_reference
         return render(request, 'transcripts/paystack_payment.html', {
             'transcript': transcript,
             'paystack_public_key': paystack_public_key,
+            'paystack_reference': ref,
         })
 
 @csrf_exempt
