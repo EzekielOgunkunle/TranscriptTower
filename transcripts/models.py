@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -41,7 +40,6 @@ class TranscriptRequest(models.Model):
     change_requested = models.BooleanField(default=False)
     pdf_file = models.FileField(upload_to='transcripts/', blank=True, null=True)
     payment_confirmed = models.BooleanField(default=False)
-    payment_method = models.CharField(max_length=30, blank=True)
     payment_reference = models.CharField(max_length=100, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 

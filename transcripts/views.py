@@ -310,35 +310,6 @@ def paystack_webhook(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
-def confirm_manual_payment(request, pk):
-    transcript = TranscriptRequest.objects.get(pk=pk)
-    if request.method == 'POST' and not transcript.payment_confirmed:
-        transcript.payment_confirmed = True
-        transcript.status = 'confirmed'
-        transcript.save()
-        # Notify user
-        email_body = render_to_string('emails/notification_email.html', {
-            'user': transcript.student,
-            'message': f'Your manual payment for transcript request #{transcript.id} has been confirmed by admin.',
-            'site_name': 'Transcript Tower',
-        })
-        send_mail(
-            'Manual Payment Confirmed',
-            '',
-            settings.DEFAULT_FROM_EMAIL,
-            [transcript.student.email],
-            html_message=email_body,
-            fail_silently=True,
-        )
-        # Create notification for user
-        Notification.objects.create(
-            user=transcript.student,
-            message=f'Your manual payment for transcript request #{transcript.id} has been confirmed by admin.'
-        )
-        messages.success(request, 'Manual payment confirmed and user notified.')
-        return redirect('transcripts:admin_request_list')
-    return render(request, 'transcripts/confirm_manual_payment.html', {'transcript': transcript})
 def contact(request):
     from django.core.mail import send_mail
     from django.conf import settings
