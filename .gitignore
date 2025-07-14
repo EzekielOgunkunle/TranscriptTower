@@ -1,0 +1,20 @@
+# Django/Project secrets
+.env
+.env.*
+secrets.json
+*.secret
+*.key
+*.pem
+*.crt
+*.p12
+*.envrc
+# VS Code settings
+.vscode/settings.json
+# Python cache
+__pycache__/
+*.pyc
+# OS files
+.DS_Store
+Thumbs.db
+# Node/npm
+node_modules/
