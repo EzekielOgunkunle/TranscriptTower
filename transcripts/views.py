@@ -141,8 +141,8 @@ class AdminTranscriptListView(View):
         if program:
             requests_qs = requests_qs.filter(student__program__icontains=program)
         if payment_status:
-            if payment_status == 'confirmed':
-                requests_qs = requests_qs.filter(payment_confirmed=True)
+            if payment_status == 'processing':
+                requests_qs = requests_qs.filter(status='processing')
             elif payment_status == 'pending':
                 requests_qs = requests_qs.filter(payment_confirmed=False)
         if date_from:
@@ -162,9 +162,8 @@ class AdminTranscriptListView(View):
         total = TranscriptRequest.objects.count()
         pending = TranscriptRequest.objects.filter(status='pending').count()
         ready = TranscriptRequest.objects.filter(status='ready_for_payment').count()
-        confirmed = TranscriptRequest.objects.filter(status='confirmed').count()
+        processing = TranscriptRequest.objects.filter(status='processing').count()
         delivered = TranscriptRequest.objects.filter(status='delivered').count()
-        manual_payments = TranscriptRequest.objects.filter(status='ready_for_payment', payment_confirmed=False).count()
         # Always show max 5 recent requests (from all, not just filtered)
         recent = TranscriptRequest.objects.order_by('-created_at')[:5]
         return render(request, 'transcripts/admin_request_list.html', {
@@ -172,9 +171,8 @@ class AdminTranscriptListView(View):
             'total_requests': total,
             'pending_requests': pending,
             'ready_requests': ready,
-            'confirmed_requests': confirmed,
+            'processing_requests': processing,
             'delivered_requests': delivered,
-            'manual_payments': manual_payments,
             'recent_requests': recent,
             'status_filter': status_filter,
             'student_query': student_query,
@@ -284,16 +282,24 @@ def paystack_webhook(request):
             transcript = TranscriptRequest.objects.filter(payment_reference=reference, student__email=email).first()
             if transcript and not transcript.payment_confirmed:
                 transcript.payment_confirmed = True
-                transcript.status = 'confirmed'
+                transcript.status = 'processing'
                 transcript.save()
+                # Timeline log
+                from .models import TranscriptRequestTimeline
+                TranscriptRequestTimeline.objects.create(
+                    request=transcript,
+                    user=None,
+                    status='processing',
+                    comment='Payment confirmed via Paystack. Status set to processing.'
+                )
                 # Notify user
                 email_body = render_to_string('emails/notification_email.html', {
                     'user': transcript.student,
-                    'message': f'Your payment of ₦{amount} was successful. Your transcript request is now confirmed.',
+                    'message': f'Your payment of ₦{amount} was successful. Your transcript request is now being processed.',
                     'site_name': 'Transcript Tower',
                 })
                 send_mail(
-                    'Transcript Payment Confirmed',
+                    'Transcript Payment Received',
                     '',
                     settings.DEFAULT_FROM_EMAIL,
                     [transcript.student.email],
@@ -303,7 +309,7 @@ def paystack_webhook(request):
                 # Create notification for user
                 Notification.objects.create(
                     user=transcript.student,
-                    message=f'Your payment of ₦{amount} was successful. Your transcript request is now confirmed.'
+                    message=f'Your payment of ₦{amount} was successful. Your transcript request is now being processed.'
                 )
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'ignored'})

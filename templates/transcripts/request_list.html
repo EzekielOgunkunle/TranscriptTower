@@ -71,7 +71,7 @@
           <option value="">All</option>
           <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
           <option value="ready_for_payment" {% if status_filter == 'ready_for_payment' %}selected{% endif %}>Ready for Payment</option>
-          <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+          <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>Processing</option>
           <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
         </select>
       </div>
@@ -97,12 +97,12 @@
           <td>{{ req.id }}</td>
           <td>{{ req.get_request_type_display }}</td>
           <td>
-            <span class="badge {% if req.status == 'pending' %}bg-secondary{% elif req.status == 'ready_for_payment' %}bg-warning text-dark{% elif req.status == 'confirmed' %}bg-info text-dark{% elif req.status == 'delivered' %}bg-success{% else %}bg-light text-dark{% endif %}">
+            <span class="badge {% if req.status == 'pending' %}bg-secondary{% elif req.status == 'ready_for_payment' %}bg-warning text-dark{% elif req.status == 'processing' %}bg-info text-dark{% elif req.status == 'delivered' %}bg-success{% else %}bg-light text-dark{% endif %}">
               {{ req.get_status_display }}
             </span>
           </td>
           <td>{% if req.price %}₦{{ req.price }}{% else %}-{% endif %}</td>
-          <td>{% if req.payment_confirmed %}<span class="badge bg-success">Confirmed</span>{% elif req.status == 'ready_for_payment' %}<span class="badge bg-warning text-dark">Pending</span>{% else %}-{% endif %}</td>
+          <td>{% if req.payment_confirmed %}<span class="badge bg-success">Paid</span>{% elif req.status == 'ready_for_payment' %}<span class="badge bg-warning text-dark">Pending</span>{% else %}-{% endif %}</td>
           <td>{{ req.admin_feedback|default:"-" }}</td>
           <td>
             {% if req.pdf_file %}
@@ -131,10 +131,6 @@
             {% if req.status == 'ready_for_payment' and not req.payment_confirmed %}
               {% if req.price %}
                 <a href="{% url 'transcripts:paystack_payment' req.id %}" class="btn btn-sm btn-primary mb-1">Pay with Paystack</a>
-                <form method="post" action="" style="display:inline;">
-                  {% csrf_token %}
-                  <button type="button" class="btn btn-sm btn-warning" onclick="alert('Please follow the manual payment instructions sent to your email or contact admin.')">Manual Payment</button>
-                </form>
               {% else %}
                 <span class="text-danger">Awaiting admin to set price</span>
               {% endif %}

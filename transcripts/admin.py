@@ -14,7 +14,7 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
     list_display = ('id', 'student', 'request_type', 'status', 'graduation_year', 'program', 'created_at', 'payment_confirmed')
     list_filter = ('status', 'request_type', 'payment_confirmed', 'student__graduation_year', 'student__program', 'created_at')
     search_fields = ('student__username', 'student__email', 'student__full_name', 'matric_number', 'recipient_name', 'recipient_email', 'program')
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'payment_confirmed')
     actions = ['mark_as_ready_for_payment', 'mark_as_processing', 'mark_as_delivered']
     form = AdminTranscriptUpdateForm
 
@@ -184,6 +184,9 @@ class TranscriptRequestAdmin(admin.ModelAdmin):
     actions.append('bulk_download_pdfs')
 
     def save_model(self, request, obj, form, change):
+        # Prevent status changes before 'processing' if payment is confirmed
+        if obj.payment_confirmed and obj.status not in ['processing', 'pending_review', 'change_requested', 'delivered']:
+            obj.status = 'processing'
         super().save_model(request, obj, form, change)
         # Timeline log
         TranscriptRequestTimeline.objects.create(

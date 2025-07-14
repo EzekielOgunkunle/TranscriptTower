@@ -24,7 +24,6 @@ class TranscriptRequestTests(TestCase):
             'request_type': 'soft_copy',
             'recipient_name': 'Recipient',
             'recipient_email': 'rec@example.com',
-            'payment_method': 'manual',
         })
         self.assertEqual(response.status_code, 302)
         self.assertTrue(TranscriptRequest.objects.filter(student=self.user, request_type='soft_copy').exists())
@@ -35,14 +34,13 @@ class TranscriptRequestTests(TestCase):
             'request_type': 'printed',
             'printed_delivery_method': 'pickup',
             'delivery_address': '123 Main St',
-            'payment_method': 'manual',
         })
         self.assertEqual(response.status_code, 302)
         self.assertTrue(TranscriptRequest.objects.filter(student=self.user, request_type='printed').exists())
 
     def test_admin_can_update_status_and_upload_pdf(self):
         req = TranscriptRequest.objects.create(
-            student=self.user, request_type='soft_copy', status='processing', payment_method='manual'
+            student=self.user, request_type='soft_copy', status='processing'
         )
         self.client.login(username='admin', password='Adminpass123!')
         pdf = SimpleUploadedFile('transcript.pdf', b'PDF content', content_type='application/pdf')
@@ -51,16 +49,15 @@ class TranscriptRequestTests(TestCase):
             'admin_feedback': 'Done',
             'pdf_file': pdf,
             'payment_confirmed': True,
-            'payment_method': 'manual',
             'payment_reference': 'REF123',
-        })
+        })  # payment_confirmed is now read-only, but test keeps for legacy compatibility
         req.refresh_from_db()
         self.assertEqual(req.status, 'delivered')
         self.assertTrue(req.pdf_file)
 
     def test_student_can_download_pdf(self):
         req = TranscriptRequest.objects.create(
-            student=self.user, request_type='soft_copy', status='delivered', payment_method='manual'
+            student=self.user, request_type='soft_copy', status='delivered'
         )
         req.pdf_file.save('transcript.pdf', SimpleUploadedFile('transcript.pdf', b'PDF content', content_type='application/pdf'))
         self.client.login(username='student', password='Testpass123!')
@@ -70,7 +67,7 @@ class TranscriptRequestTests(TestCase):
 
     def test_notifications_sent_on_status_change(self):
         req = TranscriptRequest.objects.create(
-            student=self.user, request_type='soft_copy', status='pending', payment_method='manual'
+            student=self.user, request_type='soft_copy', status='pending'
         )
         self.client.login(username='admin', password='Adminpass123!')
         # Mark as ready for payment

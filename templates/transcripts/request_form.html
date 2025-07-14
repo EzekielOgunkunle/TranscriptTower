@@ -8,12 +8,6 @@
   {{ form|crispy }}
   <button type="submit" class="btn btn-primary">Submit Request</button>
 </form>
-{% if form.payment_method.value == 'manual' or not form.payment_method.value %}
-  <div class="alert alert-warning mt-3">
-    <strong>Manual Payment Instructions:</strong><br>
-    After admin review, you will receive payment instructions and the price. Please wait for admin notification before making any payment.
-  </div>
-{% endif %}
 {% endblock %}
 {% block extra_js %}
 <script>

@@ -1,12 +1,12 @@
 # Transcript Tower
 
-Transcript Tower is a Django web app that makes it easy for students to request, pay for, and receive their transcripts. It supports both online (Paystack) and manual payments, and gives admins a simple dashboard to manage everything.
+Transcript Tower is a Django web app that makes it easy for students to request, pay for, and receive their transcripts. It supports secure online payments via Paystack only, and gives admins a simple dashboard to manage everything.
 
 ## What’s Inside
 
 - Easy user registration with email/OTP verification
 - Request soft or printed transcripts
-- Pay securely online or use manual payment
+- Pay securely online with Paystack
 - Admin dashboard for managing requests and payments
 - Upload and deliver transcripts as PDFs
 - Email notifications for status updates

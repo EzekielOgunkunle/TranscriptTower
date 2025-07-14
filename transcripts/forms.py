@@ -34,9 +34,14 @@ class AdminTranscriptUpdateForm(forms.ModelForm):
         self.fields['admin_feedback'].required = False
         self.fields['payment_confirmed'].required = False
         self.fields['price'].required = False
-        # Remove payment_method field if present (manual payment removed)
-        if 'payment_method' in self.fields:
-            self.fields.pop('payment_method')
+        # No manual payment field remains
+        # Make payment_confirmed read-only if already confirmed
+        if self.instance and self.instance.payment_confirmed:
+            self.fields['payment_confirmed'].disabled = True
+        # Prevent status changes before 'processing' if payment is confirmed
+        if self.instance and self.instance.payment_confirmed:
+            allowed_statuses = ['processing', 'pending_review', 'change_requested', 'delivered']
+            self.fields['status'].choices = [c for c in self.fields['status'].choices if c[0] in allowed_statuses]
 
     def clean_pdf_file(self):
         pdf = self.cleaned_data.get('pdf_file')

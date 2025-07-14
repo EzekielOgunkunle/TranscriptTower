@@ -24,7 +24,6 @@ class TranscriptRequest(models.Model):
         ('processing', 'Processing'),
         ('pending_review', 'Pending Review'),
         ('change_requested', 'Change Requested'),
-        ('confirmed', 'Confirmed'),
         ('delivered', 'Delivered'),
     ]
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
