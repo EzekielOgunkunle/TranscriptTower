@@ -41,24 +41,33 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 ## Getting Started
 
 1. **Set up your environment:**
+
    ```sh
    python3 -m venv venv
    source venv/bin/activate
    ```
+
 2. **Install dependencies:**
+
    ```sh
    pip install -r requirements.txt
    ```
+
 3. **Configure your database** (PostgreSQL) in `transcript_tower/settings.py`.
 4. **Apply migrations:**
+
    ```sh
    python manage.py migrate
    ```
+
 5. **Create an admin user:**
+
    ```sh
    python manage.py createsuperuser
    ```
+
 6. **Run the server:**
+
    ```sh
    python manage.py runserver
    ```
@@ -66,6 +75,7 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 ## Running Tests
 
 To run all tests:
+
 ```sh
 python manage.py test
 ```
