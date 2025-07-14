@@ -3,44 +3,44 @@
 {% block content %}
 <div class="container mt-4">
   <h2 class="mb-3">Admin Dashboard</h2>
-  <div class="row mb-4">
-    <div class="col-md-2">
-      <div class="card text-bg-primary mb-3">
-        <div class="card-body">
-          <h6 class="card-title">Total</h6>
-          <p class="card-text fs-5">{{ total_requests }}</p>
+  <div class="row mb-4 g-3">
+    <div class="col-md-2 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Total</h6>
+          <p class="card-text fs-4 fw-bold">{{ total_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-2">
-      <div class="card text-bg-warning mb-3">
-        <div class="card-body">
-          <h6 class="card-title">Pending</h6>
-          <p class="card-text fs-5">{{ pending_requests }}</p>
+    <div class="col-md-2 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Pending</h6>
+          <p class="card-text fs-4 fw-bold">{{ pending_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-2">
-      <div class="card text-bg-info mb-3">
-        <div class="card-body">
-          <h6 class="card-title">Ready for Payment</h6>
-          <p class="card-text fs-5">{{ ready_requests }}</p>
+    <div class="col-md-2 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Ready for Payment</h6>
+          <p class="card-text fs-4 fw-bold">{{ ready_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-2">
-      <div class="card text-bg-success mb-3">
-        <div class="card-body">
-          <h6 class="card-title">Processing</h6>
-          <p class="card-text fs-5">{{ processing_requests }}</p>
+    <div class="col-md-2 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Processing</h6>
+          <p class="card-text fs-4 fw-bold">{{ processing_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-2">
-      <div class="card text-bg-secondary mb-3">
-        <div class="card-body">
-          <h6 class="card-title">Delivered</h6>
-          <p class="card-text fs-5">{{ delivered_requests }}</p>
+    <div class="col-md-2 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Delivered</h6>
+          <p class="card-text fs-4 fw-bold">{{ delivered_requests }}</p>
         </div>
       </div>
     </div>

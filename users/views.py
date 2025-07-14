@@ -39,7 +39,7 @@ class RegisterView(View):
                 fail_silently=False,
             )
             messages.success(request, 'Registration successful! Check your email for the OTP.')
-            # Do not log in yet; only after verification
+            # Always redirect to OTP page after registration
             return redirect('users:verify_otp', user_id=user.id)
         return render(request, 'users/register.html', {'form': form})
 
@@ -118,7 +118,12 @@ class CustomLoginView(LoginView):
         if not user.is_verified:
             messages.error(self.request, 'You must verify your account before signing in.')
             return redirect('users:resend_otp')
-        return super().form_valid(form)
+        # Redirect to dashboard after login
+        login(self.request, user)
+        if user.is_superuser:
+            return redirect('transcripts:admin_request_list')
+        else:
+            return redirect('transcripts:request_list')
 
 class CustomLogoutView(LogoutView):
     next_page = '/users/login/'

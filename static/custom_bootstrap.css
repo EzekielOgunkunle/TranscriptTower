@@ -1,27 +1,131 @@
-/* Custom Bootstrap overrides for Transcript Tower */
-/* :root {
-  --bs-primary: #a94442; /* red-brown */
-  --bs-secondary: #ffecd2; /* orange-cream */
-  --bs-body-bg: #fff8f3;
-  --bs-body-color: #3d1f14;
-} */
+/* Modern, clean, and animated UI for Transcript Tower */
 
-/* body {
-  background-color: var(--bs-body-bg);
-  color: var(--bs-body-color);
-} */
-
-/* .btn-primary {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
-} */
-
-/* .btn-secondary {
-  background-color: var(--bs-secondary);
-  border-color: var(--bs-secondary);
-  color: #a94442;
-} */
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+  color: #222;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
+}
 
 .navbar {
-  background: linear-gradient(90deg, #a94442 0%, #3a0000 100%);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(60, 72, 88, 0.07);
+  border-bottom: 1px solid #e5e7eb;
 }
+
+.navbar-brand {
+  color: #2563eb !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.card {
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 24px rgba(60, 72, 88, 0.08);
+  border: none;
+  transition: box-shadow 0.3s;
+}
+.card:hover {
+  box-shadow: 0 8px 32px rgba(60, 72, 88, 0.13);
+}
+
+.btn-primary, .btn-outline-primary {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 2rem;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.btn-primary:hover, .btn-outline-primary:hover {
+  background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.13);
+}
+
+.btn-outline-primary {
+  background: transparent;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+.btn-outline-primary:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.table {
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(60, 72, 88, 0.06);
+}
+th, td {
+  vertical-align: middle !important;
+}
+
+.form-control, .form-select {
+  border-radius: 1.5rem;
+  border: 1px solid #cbd5e1;
+  background: #f9fafb;
+  transition: border-color 0.2s;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #60a5fa33;
+}
+
+.alert {
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(60, 72, 88, 0.07);
+}
+
+.timeline-container, .list-group-item {
+  border-radius: 1rem;
+  background: #f3f6fa;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 4px rgba(60, 72, 88, 0.04);
+}
+
+.fade-in {
+  animation: fadeIn 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal-content {
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px rgba(60, 72, 88, 0.18);
+}
+
+.pagination .page-link {
+  border-radius: 50% !important;
+  color: #2563eb;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.pagination .page-item.active .page-link {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+}
+.pagination .page-link:hover {
+  background: #e0e7ef;
+  color: #1e40af;
+}
+
+footer {
+  background: #f1f5f9;
+  color: #222;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Animations for cards and dashboard */
+.dashboard-card {
+  animation: fadeIn 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Add more custom styles as needed for a modern, clean look */

@@ -2,22 +2,18 @@
 {% block title %}Transcript Tower{% endblock %}
 {% block content %}
 <div class="row justify-content-center mt-5">
-  <div class="col-lg-8 text-center">
+  <div class="col-lg-8 text-center fade-in">
     <h1 class="display-4 mb-3">Welcome to Transcript Tower</h1>
     <p class="lead mb-4">A modern, secure, and user-friendly transcript management system for students and administrators.</p>
     <div class="mb-4">
       {% if user.is_authenticated %}
         {% if user.is_superuser %}
-          <a href="{% url 'transcripts:admin_request_list' %}" class="btn btn-danger btn-lg me-2">Admin Dashboard</a>
+          <a href="{% url 'transcripts:admin_request_list' %}" class="btn btn-primary btn-lg me-2">Go to Dashboard</a>
         {% elif user.is_verified %}
-          <a href="{% url 'transcripts:request_list' %}" class="btn btn-primary btn-lg me-2">My Dashboard</a>
+          <a href="{% url 'transcripts:request_list' %}" class="btn btn-primary btn-lg me-2">Go to Dashboard</a>
         {% else %}
           <a href="{% url 'users:resend_otp' %}" class="btn btn-warning btn-lg me-2">Verify Your Account</a>
         {% endif %}
-        <form method="post" action="{% url 'users:logout' %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outline-secondary btn-lg">Logout</button>
-        </form>
       {% else %}
         <a href="{% url 'users:login' %}" class="btn btn-primary btn-lg me-2">Login</a>
         <a href="{% url 'users:register' %}" class="btn btn-outline-primary btn-lg">Register</a>
@@ -25,7 +21,7 @@
     </div>
     <div class="row mt-4">
       <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 shadow-sm dashboard-card">
           <div class="card-body">
             <h5 class="card-title">Request Transcripts</h5>
             <p class="card-text">Easily request soft or printed transcripts, track status, and receive notifications.</p>
@@ -34,21 +30,20 @@
         </div>
       </div>
       <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 shadow-sm dashboard-card">
           <div class="card-body">
-            <h5 class="card-title">Support</h5>
-            <p class="card-text">Need help? Visit our support page for FAQs or to contact our team.</p>
-            <a href="#support" class="btn btn-outline-success">Get Support</a>
+            <h5 class="card-title">Track & Notifications</h5>
+            <p class="card-text">Track your transcript status and get instant notifications on progress.</p>
+            <a href="{% url 'transcripts:request_list' %}" class="btn btn-outline-success">Track Requests</a>
           </div>
         </div>
       </div>
       <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 shadow-sm dashboard-card">
           <div class="card-body">
-            <h5 class="card-title">About & Contact</h5>
-            <p class="card-text">Learn more about Transcript Tower or reach out to us directly.</p>
-            <a href="#about" class="btn btn-outline-info me-2">About</a>
-            <a href="#contact" class="btn btn-outline-secondary">Contact</a>
+            <h5 class="card-title">Contact Support</h5>
+            <p class="card-text">Need help? Reach out to our support team for assistance.</p>
+            <a href="mailto:support@transcripttower.com" class="btn btn-outline-info">Contact Us</a>
           </div>
         </div>
       </div>

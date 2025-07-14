@@ -4,5 +4,10 @@
 <h2>My Dashboard</h2>
 <p>Welcome, {{ user.get_full_name }}!</p>
 <a href="{% url 'transcripts:request_list' %}" class="btn btn-primary">My Transcript Requests</a>
-<a href="{% url 'users:logout' %}" class="btn btn-secondary ms-2">Logout</a>
+<a href="{% url 'transcripts:user_notifications' %}" class="btn btn-outline-primary ms-2">Notifications</a>
+<a href="{% url 'users:dashboard' %}" class="btn btn-outline-secondary ms-2">Account</a>
+<form method="post" action="{% url 'users:logout' %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-secondary ms-2">Logout</button>
+</form>
 {% endblock %}

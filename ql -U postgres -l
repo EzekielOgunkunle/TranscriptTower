@@ -1,0 +1,7 @@
+                                                          List of databases
+        Name         |  Owner   | Encoding | Locale Provider |   Collate   |    Ctype    | Locale | ICU Rules |   Access privileges   
+---------------------+----------+----------+-----------------+-------------+-------------+--------+-----------+-----------------------
+ transcript_tower_db | postgres | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | =Tc/postgres         +
+                     |          |          |                 |             |             |        |           | postgres=CTc/postgres
+(1 row)
+

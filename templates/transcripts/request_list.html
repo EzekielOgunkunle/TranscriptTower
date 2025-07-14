@@ -3,36 +3,36 @@
 {% block content %}
 <div class="container mt-4">
   <h2 class="mb-3">My Dashboard</h2>
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card text-bg-primary mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Total Requests</h5>
-          <p class="card-text fs-4">{{ total_requests }}</p>
+  <div class="row mb-4 g-3">
+    <div class="col-md-3 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Total Requests</h6>
+          <p class="card-text fs-4 fw-bold text-primary">{{ total_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-bg-warning mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Pending</h5>
-          <p class="card-text fs-4">{{ pending_requests }}</p>
+    <div class="col-md-3 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Pending</h6>
+          <p class="card-text fs-4 fw-bold text-warning">{{ pending_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-bg-info mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Ready for Payment</h5>
-          <p class="card-text fs-4">{{ ready_requests }}</p>
+    <div class="col-md-3 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Ready for Payment</h6>
+          <p class="card-text fs-4 fw-bold text-info">{{ ready_requests }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card text-bg-success mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Delivered</h5>
-          <p class="card-text fs-4">{{ delivered_requests }}</p>
+    <div class="col-md-3 dashboard-card">
+      <div class="card mb-3 fade-in">
+        <div class="card-body text-center">
+          <h6 class="card-title text-uppercase text-muted small">Delivered</h6>
+          <p class="card-text fs-4 fw-bold text-success">{{ delivered_requests }}</p>
         </div>
       </div>
     </div>
