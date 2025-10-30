@@ -35,6 +35,7 @@ Transcript Tower is a Django web app that makes it easy for students to request,
 - **Bulk Actions:** Download multiple PDFs as ZIP, send notifications, and more.
 - **PWA:** Installable on mobile/desktop, works offline, and supports add-to-home-screen.
 - **Accessibility:** Improved mobile and accessibility support.
+- **GitHub to Notion Sync:** Automatically sync all GitHub repositories to Notion with comprehensive status tracking. See [docs/GITHUB_NOTION_SYNC.md](docs/GITHUB_NOTION_SYNC.md) for details.
 
 ---
 
@@ -79,6 +80,28 @@ To run all tests:
 ```sh
 python manage.py test
 ```
+
+## Management Commands
+
+Transcript Tower includes several useful management commands:
+
+### Send Payment Reminders
+
+Sends automated email reminders for transcript requests with pending payments:
+
+```sh
+python manage.py send_payment_reminders
+```
+
+### Sync GitHub Repositories to Notion
+
+Analyzes all your GitHub repositories and creates a comprehensive status page in Notion:
+
+```sh
+python manage.py sync_github_repos_to_notion --github-token YOUR_TOKEN --notion-token YOUR_TOKEN --notion-database-id YOUR_DB_ID
+```
+
+See [docs/GITHUB_NOTION_SYNC.md](docs/GITHUB_NOTION_SYNC.md) for complete documentation and usage examples.
 
 ## Customization
 
