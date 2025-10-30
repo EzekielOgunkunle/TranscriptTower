@@ -62,7 +62,7 @@ NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxx
 ### Method 1: Using Environment Variables (Recommended)
 ```bash
 # Load environment variables
-source .env  # or use 'export $(cat .env | xargs)' 
+source .env  # or use 'export $(cat .env | xargs)'
 
 # Run the sync
 python manage.py sync_github_repos_to_notion
@@ -130,7 +130,7 @@ Set up a cron job to sync daily:
 crontab -e
 
 # Add this line (daily at 2 AM)
-0 2 * * * cd /path/to/TranscriptTower && /path/to/venv/bin/python manage.py sync_github_repos_to_notion
+0 2 * * * cd /path/to/your-project && /path/to/venv/bin/python manage.py sync_github_repos_to_notion
 ```
 
 ### Customize the Analysis
