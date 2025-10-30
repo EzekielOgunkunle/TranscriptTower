@@ -4,3 +4,7 @@ django-crispy-forms
 crispy-bootstrap5
 django-anymail
 weasyprint
+djangorestframework
+PyGithub
+notion-client
+requests
